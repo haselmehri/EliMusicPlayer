@@ -811,25 +811,27 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         if (intent.getAction() != null && intent.getAction().equals("android.intent.action.VIEW")) {
 
         }*/
-        updateMusicPlayerUIListener = new UpdateMusicPlayerUIListener();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_MUSIC_PLAYER_UI_UPDATE);
-        filter.addAction(ACTION_MUSIC_PLAYER_CLOSE);
-        filter.addAction(ACTION_PLAY_BUTTON_IMAGE_CHANGE);
-        registerReceiver(updateMusicPlayerUIListener, filter);
+        if (updateMusicPlayerUIListener == null) {
+            updateMusicPlayerUIListener = new UpdateMusicPlayerUIListener();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ACTION_MUSIC_PLAYER_UI_UPDATE);
+            filter.addAction(ACTION_MUSIC_PLAYER_CLOSE);
+            filter.addAction(ACTION_PLAY_BUTTON_IMAGE_CHANGE);
+            registerReceiver(updateMusicPlayerUIListener, filter);
+        }
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        unregisterReceiver(updateMusicPlayerUIListener);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         try {
-            unregisterReceiver(updateMusicPlayerUIListener);
+            if (updateMusicPlayerUIListener != null)
+                unregisterReceiver(updateMusicPlayerUIListener);
         } catch (Exception e) {
             Crashlytics.log(Log.ERROR, TAG, "MusicPlayerActivity : OnDestroy");
             Crashlytics.logException(e);
@@ -841,6 +843,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
             timer.cancel();
         }
         Log.i(TAG, "onDestroy: onDestroy()");
+        finish();
 
         super.onDestroy();
     }
