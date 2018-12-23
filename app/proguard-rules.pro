@@ -19,5 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--dontwarn com.google**
--dontwarn com.squareup**
+
+-ignorewarnings
+-keep class * {
+    public private *;
+}

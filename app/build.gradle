@@ -4,7 +4,7 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 28
-
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "haselmehri.app.com.elimusicplayer"
         minSdkVersion 16
@@ -16,6 +16,7 @@ android {
     }
     buildTypes {
         release {
+            shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
