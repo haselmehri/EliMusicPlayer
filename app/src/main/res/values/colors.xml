@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5fd080</color>
+    <color name="colorPrimaryDark">#43965b</color>
+    <color name="colorAccent">#607d8b</color>
+    <color name="colorAccentDark">#3f515a</color>
+    <color name="color_orange">#ffc71c</color>
+    <color name="color_orange_dark">#F89406</color>
+    <color name="music_player_dark_gray">#424242</color>
+    <color name="color_red">#FF4081</color>
+    <color name="color_red_dark">#e22867</color>
+    <color name="white">#ffff</color>
+</resources>

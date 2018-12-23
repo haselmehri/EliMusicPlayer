@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="standard_margin">8dp</dimen>
+    <dimen name="large_font_size">16sp</dimen>
+    <dimen name="very_small_padding">4dp</dimen>
+    <dimen name="standard_margin_x2">16dp</dimen>
+    <dimen name="music_player_seek_bar_margin">16dp</dimen>
+    <dimen name="standard_padding">16dp</dimen>
+    <dimen name="normal_font_size">14sp</dimen>
+    <dimen name="small_padding">8dp</dimen>
+</resources>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "121302849556",
+    "firebase_url": "https://elimusicplayer.firebaseio.com",
+    "project_id": "elimusicplayer",
+    "storage_bucket": "elimusicplayer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121302849556:android:eafa9a906c2e7bae",
+        "android_client_info": {
+          "package_name": "haselmehri.app.com.elimusicplayer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "121302849556-b5vh6n69jj2stk8jtahfaieujiar0v21.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "haselmehri.app.com.elimusicplayer",
+            "certificate_hash": "0b89fbefc58c6517275138e2b34a31d474517333"
+          }
+        },
+        {
+          "client_id": "121302849556-7b17jprbg3tenbb4hg4jrgij1641t5jt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvrr2HQ2M8BBs2nkvqXxZKYZY64lDN7ws"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "121302849556-7b17jprbg3tenbb4hg4jrgij1641t5jt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

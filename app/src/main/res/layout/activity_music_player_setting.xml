@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/music_player_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr"
+    tools:context=".MusicPlayerSettingActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_music_player_setting"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layoutDirection="ltr"
+        android:padding="@dimen/standard_padding"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_show_audio_visualizer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Visualizer"
+            app:switchPadding="@dimen/standard_padding" />
+
+        <TextView
+            android:id="@+id/gender_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/standard_margin"
+            android:paddingTop="@dimen/standard_margin_x2"
+            android:text="Select Audio Visualizer Type"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/large_font_size" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/standard_padding"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/line_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/standard_margin"
+                android:text="Line Visualizer" />
+            <RadioButton
+                android:id="@+id/bar_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/standard_margin_x2"
+                android:text="Bar Visualizer" />
+            <RadioButton
+                android:id="@+id/circle_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/standard_margin_x2"
+                android:text="Circle Visualizer" />
+            <RadioButton
+                android:id="@+id/circle_bar_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/standard_margin_x2"
+                android:text="Circle Bar Visualizer" />
+            <RadioButton
+                android:id="@+id/line_bar_radio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:layout_marginRight="@dimen/standard_margin_x2"
+                android:text="Line Bar Visualizer" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/button_save_setting"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/selector_accent_button"
+            android:text="Save Setting"
+            android:textColor="@color/white"
+            android:textSize="14dp"></Button>
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

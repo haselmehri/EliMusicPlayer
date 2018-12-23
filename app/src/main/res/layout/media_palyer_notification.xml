@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/small_padding">
+
+    <TextView
+        android:id="@+id/text_music_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="80dp"
+        android:layout_toStartOf="@id/action_clear_button"
+        android:layout_marginEnd="40dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif"
+        android:maxLines="1"
+        android:textColor="@color/color_orange_dark"
+        android:textSize="@dimen/large_font_size"
+        tools:text="Music fsdhfvdsfvdshf sdvfhvdsfvjssdasasdasdasdasdasdasd name.mp3"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/action_clear_button"
+        android:layout_marginRight="40dp" />
+
+    <ImageView
+        android:id="@+id/action_clear_button"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentRight="true"
+        android:adjustViewBounds="true"
+        android:clickable="true"
+        android:src="@drawable/ic_action_clear" />
+
+    <ImageView
+        android:id="@+id/skip_previous_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/standard_margin"
+        android:src="@drawable/ic_action_previous" />
+
+    <ImageView
+        android:id="@+id/rewind_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/standard_margin_x2"
+        android:layout_toRightOf="@id/skip_previous_button"
+        android:src="@drawable/ic_fast_rewind_black_48dp" />
+
+    <ImageView
+        android:id="@+id/play_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/action_clear_button"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/rewind_button"
+        android:src="@drawable/ic_action_play_blue" />
+
+    <ImageView
+        android:id="@+id/forward_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/standard_margin_x2"
+        android:layout_toRightOf="@id/play_button"
+        android:src="@drawable/ic_fast_forward_black_48dp" />
+
+    <ImageView
+        android:id="@+id/skip_next_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/standard_margin_x2"
+        android:layout_toRightOf="@id/forward_button"
+        android:src="@drawable/ic_action_next" />
+
+    <ImageView
+        android:id="@+id/image_thumbnail"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/action_clear_button"
+        android:layout_marginTop="10dp"
+        android:padding="@dimen/very_small_padding"
+        android:adjustViewBounds="true"
+        android:src="@drawable/default_thumbnail" />
+
+    <TextView
+        android:id="@+id/text_selected_music_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image_thumbnail"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/music_player_dark_gray"
+        android:textSize="@dimen/large_font_size"
+        tools:text="Musics : 1 of 10" />
+</RelativeLayout>

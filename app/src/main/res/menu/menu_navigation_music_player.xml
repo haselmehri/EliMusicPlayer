@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/main_items_group">
+        <item android:checkable="true"
+            android:icon="@drawable/ic_select_musics"
+            android:id="@+id/navigation_menu_select_musics"
+            android:title="Select Musics"></item>
+        <item
+            android:icon="@drawable/ic_music_blue"
+            android:id="@+id/navigation_menu_select_from_storage"
+            android:title="Select From Storage"></item>
+        <item
+            android:icon="@drawable/ic_favorite_gold"
+            android:id="@+id/navigation_menu_favorite_list"
+            android:title="Favorite List"></item>
+    </group>
+    <group
+        android:id="@+id/other_items_group"
+        android:checkableBehavior="single">
+        <item
+            android:icon="@drawable/ic_setting_black"
+            android:id="@+id/navigation_menu_setting"
+            android:title="Setting"></item>
+        <item
+            android:icon="@drawable/ic_exit_red"
+            android:id="@+id/navigation_menu_exit"
+            android:title="Exit"></item>
+    </group>
+</menu>

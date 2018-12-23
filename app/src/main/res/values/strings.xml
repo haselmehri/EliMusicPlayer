@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Eli Music Player</string>
+    <string name="label_music_of" translatable="false">&#160;of&#160;</string>
+    <string name="label_musics" translatable="false">Music :&#160;</string>
+    <string name="message_not_music_selected" translatable="false">No music selected for play!</string>
+    <string name="message_not_music_selected_to_play" translatable="false">No music selected for play!</string>
+    <string name="message_not_music_added_favorite" translatable="false">No music has been added to your Favorite list!</string>
+    <string name="message_music_unknown_error" translatable="false">Unknown error occurred!</string>
+    <string name="message_not_permission_voice_recorder" translatable="false">You do not have access to voice recorder, equalizer Will not be displayed</string>
+    <string name="message_not_permission_external_storage" translatable="false">You do not have access to Read External Storage!You can not select music from external storage!</string>
+    <string name="message_access_external_storage" translatable="false">Access to Read External Storage is required!</string>
+    <string name="message_access_voice_recorder" translatable="false">Access to Audio recording is required!</string>
+    <string name="contentDescription_favorite_image" translatable="false">favorite musics</string>
+    <string name="contentDescription_play_button" translatable="false">play music</string>
+    <string name="contentDescription_skip_previous_button" translatable="false">previous music</string>
+    <string name="contentDescription_skip_next_button" translatable="false">next music</string>
+    <string name="contentDescription_forward_button" translatable="false">forward music</string>
+    <string name="contentDescription_rewind_button" translatable="false">rewind music</string>
+</resources>
