@@ -68,13 +68,13 @@ public class MusicPlayerService extends Service {
 
         switch (intent.getAction()) {
             case ACTION_STOP_SERVICE:
-                //musicPlayerClose();
+                setRunningService(false);
+                musicPlayerClose();
                 notificationManager.cancel(NOTIF_ID);
                 stopForeground(true);
                 stopSelf();
 
-                setRunningService(false);
-                musicPlayerClose();
+                //setRunningService(false);
 
                 FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
