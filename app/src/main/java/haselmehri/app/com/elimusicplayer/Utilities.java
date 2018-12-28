@@ -210,12 +210,13 @@ public class Utilities {
                         }
                     }
 
-                    if (!ret.equals("") && new File(ret).exists())
+                    if (ret != null && !ret.equals("") && new File(ret).exists())
                         return ret;
                 }
             }
             return ret;
         } catch (Exception e) {
+            ret = "";
             return ret;
         } finally {
             if (cursor != null)
