@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical">
+
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/standard_padding">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="logo eli video player"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            android:textSize="@dimen/about_title_font_size"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/description_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:text="@string/about_description"
+            android:textSize="@dimen/large_font_size" />
+
+        <TextView
+            android:id="@+id/github_link_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:clickable="true"
+            android:linksClickable="true"
+            android:textColorLink="@color/colorPrimaryDark"
+            android:textSize="@dimen/large_font_size"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_ok_button"
+            android:elevation="5dp"
+            android:text="@string/about_ok_button"
+            android:textSize="@dimen/large_font_size" />
+    </LinearLayout>
+</ScrollView>

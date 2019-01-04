@@ -16,4 +16,7 @@
     <string name="contentDescription_skip_next_button" translatable="false">next music</string>
     <string name="contentDescription_forward_button" translatable="false">forward music</string>
     <string name="contentDescription_rewind_button" translatable="false">rewind music</string>
+    <string name="about_ok_button" translatable="false">Ok</string>
+    <string name="about_description" translatable="false">Eli Music Player is an open source app that has been developed by &lt;a href="https://github.com/haselmehri">Yadollah Haselmehri&lt;/a>.\nGet this source app from Github via the link below</string>
+    <string name="about_github_link" translatable="false">&lt;a href="https://github.com/haselmehri/EliMusicPlayer">Github&lt;/a></string>
 </resources>

@@ -8,4 +8,5 @@
     <dimen name="standard_padding">16dp</dimen>
     <dimen name="normal_font_size">14sp</dimen>
     <dimen name="small_padding">8dp</dimen>
+    <dimen name="about_title_font_size">20sp</dimen>
 </resources>

@@ -162,6 +162,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                     case R.id.navigation_menu_setting:
                         startActivityForResult(new Intent(MusicPlayerActivity.this, MusicPlayerSettingActivity.class), REQUSET_CODE_SETTING);
                         break;
+                    case R.id.navigation_menu_about:
+                        AboutDialog aboutDialog = new AboutDialog(MusicPlayerActivity.this);
+                        aboutDialog.setCancelable(false);
+                        aboutDialog.show();
+                        break;
                     case R.id.navigation_menu_exit:
                         finish();
                         break;
@@ -531,7 +536,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser && musicPlayerService.getMediaFiles() != null && musicPlayerService.getMediaFiles().size() > 0) {
+                if (fromUser && musicPlayerService != null &&
+                        musicPlayerService.getMediaFiles() != null && musicPlayerService.getMediaFiles().size() > 0) {
                     mediaPlayer.seekTo(progress);
                     //txtCurrentDuration.setText(formatDuration(mediaPlayer.getCurrentPosition()));
                 }

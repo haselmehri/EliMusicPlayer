@@ -14,13 +14,17 @@
             android:id="@+id/navigation_menu_favorite_list"
             android:title="Favorite List"></item>
     </group>
-    <group
+    <group android:enabled="true"
         android:id="@+id/other_items_group"
         android:checkableBehavior="single">
         <item
             android:icon="@drawable/ic_setting_black"
             android:id="@+id/navigation_menu_setting"
             android:title="Setting"></item>
+        <item
+            android:id="@+id/navigation_menu_about"
+            android:icon="@drawable/ic_about"
+            android:title="About" />
         <item
             android:icon="@drawable/ic_exit_red"
             android:id="@+id/navigation_menu_exit"
