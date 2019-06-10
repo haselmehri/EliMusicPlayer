@@ -5,7 +5,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -17,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jaiselrahman.filepicker.model.MediaFile;
@@ -49,12 +53,16 @@ public class MusicPlayerService extends Service {
     private MusicPlayerBinder musicPlayerBinder = new MusicPlayerBinder();
     private int currentMusicIndex = 0;
     private NotificationManager notificationManager;
+    private HeadsetPlugUnPluggingListener headsetPlugUnPluggingListener;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
         setupMediaPlayer();
+
+        headsetPlugUnPluggingListener = new HeadsetPlugUnPluggingListener();
+        registerReceiver(headsetPlugUnPluggingListener, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
         return musicPlayerBinder;
     }
 
@@ -69,6 +77,7 @@ public class MusicPlayerService extends Service {
         switch (intent.getAction()) {
             case ACTION_STOP_SERVICE:
                 setRunningService(false);
+                unregisterReceiver(headsetPlugUnPluggingListener);
                 musicPlayerClose();
                 notificationManager.cancel(NOTIF_ID);
                 stopForeground(true);
@@ -87,26 +96,7 @@ public class MusicPlayerService extends Service {
                 Log.i(TAG, "onStartCommand: StopService");
                 break;
             case ACTION_PLAY:
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                    notification_content.setImageViewResource(R.id.play_button, R.drawable.ic_action_play_blue);
-                    if (CURRENT_BUILD_API < Build.VERSION_CODES.HONEYCOMB) {
-                        notificationManager.notify(NOTIF_ID, notification);
-                    } else {
-                        notificationManager.notify(NOTIF_ID, builder.build());
-                    }
-                } else {
-                    mediaPlayer.start();
-                    notification_content.setImageViewResource(R.id.play_button, R.drawable.ic_action_pause_green);
-                    //notificationManager.notify(NOTIF_ID, builder.setContent(notification_content).build());
-                    if (CURRENT_BUILD_API < Build.VERSION_CODES.HONEYCOMB) {
-                        notificationManager.notify(NOTIF_ID, notification);
-                    } else {
-                        notificationManager.notify(NOTIF_ID, builder.build());
-                    }
-                }
-
-                sendToPlayButtonImageChangeBroadCast();
+                actionPlayHandle();
                 break;
             case ACTION_REWIND:
                 mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 10000);
@@ -387,6 +377,32 @@ public class MusicPlayerService extends Service {
         }
     }
 
+    private void actionPlayHandle()
+    {
+        if (notification_content == null) return;
+
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            notification_content.setImageViewResource(R.id.play_button, R.drawable.ic_action_play_blue);
+            if (CURRENT_BUILD_API < Build.VERSION_CODES.HONEYCOMB) {
+                notificationManager.notify(NOTIF_ID, notification);
+            } else {
+                notificationManager.notify(NOTIF_ID, builder.build());
+            }
+        } else {
+            mediaPlayer.start();
+            notification_content.setImageViewResource(R.id.play_button, R.drawable.ic_action_pause_green);
+            //notificationManager.notify(NOTIF_ID, builder.setContent(notification_content).build());
+            if (CURRENT_BUILD_API < Build.VERSION_CODES.HONEYCOMB) {
+                notificationManager.notify(NOTIF_ID, notification);
+            } else {
+                notificationManager.notify(NOTIF_ID, builder.build());
+            }
+        }
+
+        sendToPlayButtonImageChangeBroadCast();
+    }
+
     private void sendToPlayButtonImageChangeBroadCast() {
         Intent broadcastIntent = new Intent(MusicPlayerActivity.ACTION_PLAY_BUTTON_IMAGE_CHANGE);
         sendBroadcast(broadcastIntent);
@@ -413,6 +429,30 @@ public class MusicPlayerService extends Service {
     class MusicPlayerBinder extends Binder {
         MusicPlayerService getService() {
             return MusicPlayerService.this;
+        }
+    }
+
+    private class HeadsetPlugUnPluggingListener extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+                int state = intent.getIntExtra("state", -1);
+                switch (state) {
+                    case 0:
+                        Log.i(TAG, "Headset is unplugged");
+                        //Toast.makeText(MusicPlayerService.this,"Headset is unplugged",Toast.LENGTH_LONG).show();
+                        actionPlayHandle();
+                        break;
+                    case 1:
+                        Log.i(TAG, "Headset is plugged");
+                        //Toast.makeText(MusicPlayerService.this,"Headset is plugged",Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        Log.i(TAG, "I have no idea what the headset state is");
+                        //Toast.makeText(MusicPlayerService.this,"I have no idea what the headset state is",Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 }

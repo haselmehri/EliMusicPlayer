@@ -10,4 +10,5 @@
     <color name="color_red">#FF4081</color>
     <color name="color_red_dark">#e22867</color>
     <color name="white">#ffff</color>
+    <color name="color_background_cover_image">#f2c7d5</color>
 </resources>
