@@ -10,7 +10,7 @@
             android:id="@+id/navigation_menu_select_from_storage"
             android:title="Select From Storage"></item>
         <item
-            android:icon="@drawable/ic_favorite_gold"
+            android:icon="@drawable/ic_favorite_heart_gold"
             android:id="@+id/navigation_menu_favorite_list"
             android:title="Favorite List"></item>
     </group>

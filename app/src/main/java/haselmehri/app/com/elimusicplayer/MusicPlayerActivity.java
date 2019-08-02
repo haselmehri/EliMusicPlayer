@@ -10,11 +10,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -79,6 +82,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     public static final String ACTION_MUSIC_PLAYER_CLOSE = "com.example.haselmehri.firstapplication.MUSIC_PLAYER_CLOSE";
     public static final String ACTION_PLAY_BUTTON_IMAGE_CHANGE = "com.example.haselmehri.firstapplication.ACTION_PLAY_BUTTON_IMAGE_CHANGE";
     private Boolean isFavorite = false;
+    private boolean isVisibleVolumeSeekbar = false;
     private MediaPlayer mediaPlayer;
     private ImageView coverImage;
     private ImageView navigationHeaderImage;
@@ -90,6 +94,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     private TextView txtMusicInfo;
     private TextView txtSelectedCountMusic;
     private ImageView favoriteImage;
+    private ImageView volumeSettingImage;
     private RelativeLayout contentRelativeLayout;
     private CoordinatorLayout musicPlayerCoordinator;
     private DrawerLayout drawerLayout;
@@ -100,9 +105,13 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     private static final int CIRCLE_BAR_VISUALIZER_ID = 10101015;
     private boolean SetAudioVisualizerSession = false;
     private UpdateMusicPlayerUIListener updateMusicPlayerUIListener;
+    private SettingsContentObserver settingsContentObserver;
     private MusicPlayerSQLiteHelper musicPlayerSQLiteHelper;
     private MusicPlayerService musicPlayerService;
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private SeekBar volumeSeekbar = null;
+    private AudioManager audioManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +124,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         setAnimationOnMusicInfo();
         setToolbar();
         setupNavigationView();
-
     }
 
     private void setupNavigationView() {
@@ -453,10 +461,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
 
     private void setFavoriteImage(String filePath) {
         if (musicPlayerSQLiteHelper.checkFavoriteExists(filePath)) {
-            favoriteImage.setImageResource(R.drawable.ic_favorite_gold);
+            favoriteImage.setImageResource(R.drawable.ic_favorite_heart_gold);
             isFavorite = true;
         } else {
-            favoriteImage.setImageResource(R.drawable.ic_favorite_gray);
+            favoriteImage.setImageResource(R.drawable.ic_favorite_heart_gray);
             isFavorite = false;
         }
     }
@@ -505,14 +513,14 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         forwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 10000);
+                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 30000);
             }
         });
         ImageView rewindButton = findViewById(R.id.rewind_button);
         rewindButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 10000);
+                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 30000);
             }
         });
 
@@ -562,6 +570,56 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                 setFavoriteStatus();
             }
         });
+
+        volumeSettingImage = findViewById(R.id.volume_setting_image);
+        volumeSettingImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isVisibleVolumeSeekbar) {
+                    volumeSeekbar.setVisibility(View.VISIBLE);
+                } else {
+                    volumeSeekbar.setVisibility(View.INVISIBLE);
+                }
+                isVisibleVolumeSeekbar = !isVisibleVolumeSeekbar;
+            }
+        });
+
+        try {
+            volumeSeekbar = findViewById(R.id.volumeSeekbar);
+            audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            volumeSeekbar.setMax(maxVolume);
+            int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            volumeSeekbar.setProgress(currentVolume);
+
+            if (currentVolume == 0)
+                volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_off, null));
+            else
+                volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up, null));
+
+            volumeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onStopTrackingTouch(SeekBar arg0) {
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar arg0) {
+                }
+
+                @Override
+                public void onProgressChanged(SeekBar arg0, int progress, boolean fromUser) {
+                    if (fromUser) {
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                        if (progress == 0)
+                            volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_off, null));
+                        else
+                            volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up, null));
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -813,10 +871,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
 
     @Override
     protected void onStart() {
-        /*Intent intent = getIntent();
-        if (intent.getAction() != null && intent.getAction().equals("android.intent.action.VIEW")) {
-
-        }*/
         if (updateMusicPlayerUIListener == null) {
             updateMusicPlayerUIListener = new UpdateMusicPlayerUIListener();
             IntentFilter filter = new IntentFilter();
@@ -824,6 +878,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
             filter.addAction(ACTION_MUSIC_PLAYER_CLOSE);
             filter.addAction(ACTION_PLAY_BUTTON_IMAGE_CHANGE);
             registerReceiver(updateMusicPlayerUIListener, filter);
+        }
+        if (settingsContentObserver == null) {
+            settingsContentObserver = new SettingsContentObserver(new Handler());
+            this.getApplicationContext().getContentResolver().registerContentObserver(
+                    android.provider.Settings.System.CONTENT_URI, true,
+                    settingsContentObserver);
         }
         super.onStart();
     }
@@ -838,6 +898,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         try {
             if (updateMusicPlayerUIListener != null)
                 unregisterReceiver(updateMusicPlayerUIListener);
+
+            if (settingsContentObserver != null) {
+                this.getApplicationContext().getContentResolver().unregisterContentObserver(settingsContentObserver);
+            }
         } catch (Exception e) {
             Crashlytics.log(Log.ERROR, TAG, "MusicPlayerActivity : OnDestroy");
             Crashlytics.logException(e);
@@ -854,7 +918,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         super.onDestroy();
     }
 
-    //===implements ServiceConnection methods===
+    //=== start implements ServiceConnection methods===
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         MusicPlayerService.MusicPlayerBinder musicPlayerBinder = (MusicPlayerService.MusicPlayerBinder) service;
@@ -907,8 +971,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     public void onServiceDisconnected(ComponentName name) {
 
     }
-
-    //===implements ServiceConnection methods===
+    //=== end implements ServiceConnection methods===
 
     private class UpdateMusicPlayerUIListener extends BroadcastReceiver {
 
@@ -943,6 +1006,33 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    public class SettingsContentObserver extends ContentObserver {
+
+        public SettingsContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public boolean deliverSelfNotifications() {
+            return super.deliverSelfNotifications();
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            Log.v(TAG, "Settings change detected");
+            if (audioManager != null && volumeSeekbar != null && volumeSettingImage != null)
+            {
+               int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+               volumeSeekbar.setProgress(currentVolume);
+               if (currentVolume == 0)
+                   volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_off, null));
+               else
+                   volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up, null));
             }
         }
     }

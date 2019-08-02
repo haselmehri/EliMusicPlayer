@@ -56,11 +56,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="@dimen/standard_margin"
+                android:layout_marginBottom="@dimen/standard_margin_x2"
                 android:layout_marginLeft="@dimen/music_player_seek_bar_margin"
                 android:layout_marginRight="@dimen/music_player_seek_bar_margin"
-                android:thumb="@drawable/seek_handler" />
-
+                />
             <TextView
                 android:id="@+id/selected_music_count_textview"
                 android:layout_width="wrap_content"
@@ -68,6 +67,7 @@
                 android:layout_above="@id/buttons_relativeLayout"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/standard_margin"
+                android:layout_marginBottom="@dimen/standard_margin"
                 android:padding="@dimen/very_small_padding"
                 android:textColor="@color/colorAccentDark"
                 android:textSize="@dimen/large_font_size"
@@ -77,18 +77,40 @@
 
             <ImageView
                 android:id="@+id/favorite_image"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:clickable="true"
                 android:layout_alignParentLeft="true"
-                android:padding="@dimen/very_small_padding"
                 android:layout_marginLeft="@dimen/standard_margin"
                 android:layout_above="@id/buttons_relativeLayout"
-                android:src="@drawable/ic_favorite_gray"
+                android:src="@drawable/ic_favorite_heart_gray"
                 android:focusable="true"
                 android:layout_alignParentStart="true"
                 android:contentDescription="@string/contentDescription_favorite_image"
                 android:layout_marginStart="@dimen/standard_margin" />
+            <ImageView
+                android:id="@+id/volume_setting_image"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:clickable="true"
+                android:layout_marginLeft="@dimen/standard_margin"
+                android:layout_above="@id/buttons_relativeLayout"
+                android:src="@drawable/ic_volume_up"
+                android:focusable="true"
+                android:layout_toRightOf="@id/favorite_image"
+                android:contentDescription="@string/contentDescription_favorite_image"
+                android:layout_marginStart="@dimen/standard_margin" />
+
+            <SeekBar
+                android:id="@+id/volumeSeekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/buttons_relativeLayout"
+                android:layout_marginRight="@dimen/standard_margin"
+                android:layout_toLeftOf="@+id/selected_music_count_textview"
+                android:layout_toRightOf="@id/volume_setting_image"
+                android:layout_marginBottom="@dimen/standard_margin"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/buttons_relativeLayout"
