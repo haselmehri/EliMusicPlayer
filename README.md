@@ -1,5 +1,5 @@
 
-<style type='css/text'>
+<style >
   .color
   {
   color:red;
