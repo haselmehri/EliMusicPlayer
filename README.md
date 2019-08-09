@@ -19,18 +19,8 @@ i used the bind service and unbind(background) service in the EliMusicPlayer and
 
 To use the services on Android you need to register the service on AndroidManifest.xml.
 
-```bash
+```android
 <service android:name=".MusicPlayerService" />
-```
-
-## Usage
-
-```python
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
 ```
 
 ## License
