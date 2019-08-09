@@ -34,6 +34,16 @@
                 <category android:name="android.intent.category.CATEGORY_APP_MUSIC" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+<!--            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.MUSIC_PLAYER" />
+
+                <category android:name="android.intent.category.CATEGORY_APP_MUSIC" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -43,16 +53,7 @@
 
                 <category android:name="android.intent.category.CATEGORY_APP_MUSIC" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="android.intent.action.MUSIC_PLAYER" />
-
-                <category android:name="android.intent.category.CATEGORY_APP_MUSIC" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="content" />
                 <data android:scheme="file" />
@@ -80,7 +81,7 @@
                 <data android:mimeType="application/x-ogg" />
                 <data android:mimeType="application/itunes" />
             </intent-filter>
-            <intent-filter android:priority="-1">
+            <!--<intent-filter android:priority="-1">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -97,7 +98,7 @@
                 <data android:mimeType="application/ogg" />
                 <data android:mimeType="application/x-ogg" />
                 <data android:mimeType="application/itunes" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".MusicPlayerSettingActivity"
