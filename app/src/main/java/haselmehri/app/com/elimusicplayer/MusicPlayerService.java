@@ -99,10 +99,10 @@ public class MusicPlayerService extends Service {
                 actionPlayHandle();
                 break;
             case ACTION_REWIND:
-                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 10000);
+                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 30000);
                 break;
             case ACTION_FORWARD:
-                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 10000);
+                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 30000);
                 break;
             case ACTION_NEXT:
                 nextMusicPlay();
