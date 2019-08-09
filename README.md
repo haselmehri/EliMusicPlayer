@@ -26,5 +26,31 @@ To use the services on Android you need to register the service on AndroidManife
 <service android:name=".MusicPlayerService" />
 ```
 
+## Register App to Using Default App for Play Music
+
+  to do this register following intent in AndroidManifest.xml
+  
+  ```android
+              <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.MUSIC_PLAYER" />
+
+                <category android:name="android.intent.category.CATEGORY_APP_MUSIC" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="audio/mpeg" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="application/x-ogg" />
+                <data android:mimeType="application/itunes" />
+            </intent-filter>
+  ```
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
