@@ -1,6 +1,7 @@
 
   # EliMusicPlayer
 a simple Music Player for Android version 16(Jelly Bean) and above.
+
 i used the bind service and unbind(background) service in the EliMusicPlayer and I've also used Material Design(AppbarLayout,NavigationView...)
 
 
