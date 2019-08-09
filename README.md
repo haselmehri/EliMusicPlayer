@@ -31,7 +31,7 @@ To use the services on Android you need to register the service on AndroidManife
 
   to do this register following intent in AndroidManifest.xml
   
-  ```android
+  ```java
               <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
