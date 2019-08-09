@@ -6,7 +6,7 @@ i used the bind service and unbind(background) service in the EliMusicPlayer and
 <img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage2.jpeg" width="270" style='margin-right:5px'> <img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage1.jpeg" width="270"  style='margin-right:5px'>
 <img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage4.jpeg" width="270">
 
-# Other facilities
+## Other facilities
 
   1. Ability to add music to favorites
   2. Show equalizer while playing music
@@ -15,12 +15,12 @@ i used the bind service and unbind(background) service in the EliMusicPlayer and
   
         <img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage3.jpeg" width="270" style='margin-right:5px'> <img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage5.jpeg" width="270"  style='margin-right:5px'>
 
-## Installation
+## Register Service
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+To use the services on Android you need to register the service on AndroidManifest.xml.
 
 ```bash
-pip install foobar
+<service android:name=".MusicPlayerService" />
 ```
 
 ## Usage
