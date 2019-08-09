@@ -23,7 +23,7 @@ i used the bind service and unbind(background) service in the EliMusicPlayer and
 
 To use the services on Android you need to register the service on AndroidManifest.xml.
 
-```python
+```java
 <service android:name=".MusicPlayerService" />
 ```
 
