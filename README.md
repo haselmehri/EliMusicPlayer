@@ -1,6 +1,8 @@
 
   # EliMusicPlayer
-<div id='roman'>a simple Music Player for For Android version 16(Jelly Bean) and above</div>
+a simple Music Player for Android version 16(Jelly Bean) and above.
+i used the bind service and unbind(background) service in the EliMusicPlayer and I've also used Material Design(AppbarLayout,NavigationView...)
+<img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage2.jpeg" width="300"> <img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage1.jpeg" width="300">
 
 # Foobar
 
@@ -23,11 +25,6 @@ foobar.pluralize('word') # returns 'words'
 foobar.pluralize('goose') # returns 'geese'
 foobar.singularize('phenomena') # returns 'phenomenon'
 ```
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
