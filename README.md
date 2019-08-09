@@ -4,10 +4,13 @@ a simple Music Player for Android version 16(Jelly Bean) and above.
 i used the bind service and unbind(background) service in the EliMusicPlayer and I've also used Material Design(AppbarLayout,NavigationView...)
 
 <img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage2.jpeg" width="300"> <img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage1.jpeg" width="300">
+<img src="https://github.com/haselmehri/EliMusicPlayer/blob/master/ReadmeFiles/AppImage4.jpeg" width="300">
 
-# Foobar
+# Other facilities
 
-Foobar is a Python library for dealing with word pluralization.
+  1.Ability to add music to favorites
+  2.Show equalizer while playing music
+  3.Play music in the background and display media controls in Notification and Lock Screen
 
 ## Installation
 
