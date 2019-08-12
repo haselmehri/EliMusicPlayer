@@ -20,7 +20,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jaiselrahman.filepicker.model.MediaFile;
@@ -30,6 +29,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import haselmehri.app.com.elimusicplayer.SQLiteHelper.MusicPlayerSQLiteHelper;
+import haselmehri.app.com.elimusicplayer.model.Favorite;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -38,12 +43,14 @@ public class MusicPlayerService extends Service {
     private static final String TAG = "MusicPlayerService";
     private static final String ACTION_STOP_SERVICE = "com.example.haselmehri.firstapplication.STOP_SERVICE";
     private static final String ACTION_PLAY = "com.example.haselmehri.firstapplication.PLAY_MUSIC";
+    private static final String ACTION_FAVORITE = "com.example.haselmehri.firstapplication.FAVORITE_MUSIC";
     private static final String ACTION_FORWARD = "com.example.haselmehri.firstapplication.FORWARD_MUSIC";
     private static final String ACTION_REWIND = "com.example.haselmehri.firstapplication.REWIND_MUSIC";
     private static final String ACTION_NEXT = "com.example.haselmehri.firstapplication.NEXT_MUSIC";
     private static final String ACTION_PREVIOUS = "com.example.haselmehri.firstapplication.PREVIOUS_MUSIC";
     private static final int CURRENT_BUILD_API = SDK_INT;
     public static final int NOTIF_ID = 10123410;
+    private Boolean isFavorite = null;
     private static final String CHANNEL_ID = "music_player_chanel_id";
     private NotificationCompat.Builder builder;
     private Notification notification;
@@ -54,6 +61,7 @@ public class MusicPlayerService extends Service {
     private int currentMusicIndex = 0;
     private NotificationManager notificationManager;
     private HeadsetPlugUnPluggingListener headsetPlugUnPluggingListener;
+    private MusicPlayerSQLiteHelper musicPlayerSQLiteHelper;
 
     @Nullable
     @Override
@@ -61,6 +69,7 @@ public class MusicPlayerService extends Service {
         notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
         setupMediaPlayer();
 
+        musicPlayerSQLiteHelper = new MusicPlayerSQLiteHelper(this);
         headsetPlugUnPluggingListener = new HeadsetPlugUnPluggingListener();
         registerReceiver(headsetPlugUnPluggingListener, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
         return musicPlayerBinder;
@@ -106,11 +115,14 @@ public class MusicPlayerService extends Service {
                 break;
             case ACTION_NEXT:
                 nextMusicPlay();
-                updateNoificationActionUI();
+                //updateNoificationActionUI();
                 break;
             case ACTION_PREVIOUS:
                 previousMusicPlay();
-                updateNoificationActionUI();
+                //updateNoificationActionUI();
+                break;
+            case ACTION_FAVORITE:
+                setFavoriteStatus();
                 break;
             default:
                 setRunningService(true);
@@ -157,6 +169,12 @@ public class MusicPlayerService extends Service {
                 PendingIntent forwardPendingIntent = PendingIntent.getService(this, 0, forwardIntent, 0);
                 //=====forward PendingIntent======
 
+                //=====favorite PendingIntent======
+                Intent favoriteIntent = new Intent(this, MusicPlayerService.class);
+                favoriteIntent.setAction(ACTION_FAVORITE);
+                PendingIntent favoritePendingIntent = PendingIntent.getService(this, 0, favoriteIntent, 0);
+                //=====forward PendingIntent======
+
                 notification_content = new RemoteViews(getPackageName(), R.layout.media_palyer_notification);
                 notification_content.setOnClickPendingIntent(R.id.action_clear_button, closePendingIntent);
                 notification_content.setOnClickPendingIntent(R.id.play_button, playPendingIntent);
@@ -164,6 +182,7 @@ public class MusicPlayerService extends Service {
                 notification_content.setOnClickPendingIntent(R.id.rewind_button, rewindPendingIntent);
                 notification_content.setOnClickPendingIntent(R.id.skip_next_button, nextPendingIntent);
                 notification_content.setOnClickPendingIntent(R.id.skip_previous_button, previousPendingIntent);
+                notification_content.setOnClickPendingIntent(R.id.favorite_image, favoritePendingIntent);
 
                 if (mediaPlayer != null && mediaFiles != null && mediaFiles.size() > 0 && notification_content != null) {
                     notification_content.setTextViewText(R.id.text_music_name, mediaFiles.get(currentMusicIndex).getPath().substring(mediaFiles.get(currentMusicIndex).getPath().lastIndexOf("/") + 1));
@@ -188,7 +207,6 @@ public class MusicPlayerService extends Service {
                             .setCustomBigContentView(notification_content)
                             .setSmallIcon(R.drawable.ic_music_note_black_36dp)
                             .setContentTitle("Eli Music Player")
-                            //.setContentText("Music Name.mp3")
                             .setOngoing(true)
                             .setPriority(NotificationCompat.PRIORITY_HIGH)
                             .setTicker("Eli Music Player")
@@ -208,6 +226,8 @@ public class MusicPlayerService extends Service {
                 }
                 updatePlayButtonImage(false);
                 updateNoificationActionUI();
+                setFavoriteImage();
+
                 break;
         }
         return START_STICKY;
@@ -275,6 +295,7 @@ public class MusicPlayerService extends Service {
                     if (notification_content != null) {
                         updatePlayButtonImage(false);
                         updateNoificationActionUI();
+                        setFavoriteImage();
                     }
 
                     sendToMusicPlayerUpdateBroadCast();
@@ -377,8 +398,60 @@ public class MusicPlayerService extends Service {
         }
     }
 
-    private void actionPlayHandle()
-    {
+    public void setFavoriteStatus() {
+        if (getMediaFiles() != null && getMediaFiles().size() > 0) {
+            MediaFile mediaFile = getMediaFiles().get(getCurrentMusicIndex());
+
+            if (isFavorite) {
+                if (musicPlayerSQLiteHelper.checkFavoriteExists(mediaFile.getPath())) {
+                    if (musicPlayerSQLiteHelper.deleteFavorite(mediaFile.getPath()))
+                        setFavoriteImage();
+                } else {
+                    setFavoriteImage();
+                }
+            } else {
+                if (!musicPlayerSQLiteHelper.checkFavoriteExists(mediaFile.getPath())) {
+                    Favorite favorite = new Favorite();
+                    favorite.setFilePath(mediaFile.getPath());
+                    if (musicPlayerSQLiteHelper.addFavorite(favorite))
+                        setFavoriteImage();
+                } else {
+                    setFavoriteImage();
+                }
+            }
+        }
+    }
+
+    private void setFavoriteImage() {
+        if (musicPlayerSQLiteHelper.checkFavoriteExists(getMediaFiles().get(getCurrentMusicIndex()).getPath())) {
+            isFavorite = true;
+        } else {
+            isFavorite = false;
+        }
+
+        if (notification_content != null) {
+            if (isFavorite) {
+                notification_content.setImageViewResource(R.id.favorite_image, R.drawable.ic_favorite_heart_gold);
+            } else {
+                notification_content.setImageViewResource(R.id.favorite_image, R.drawable.ic_favorite_heart_gray);
+            }
+            if (CURRENT_BUILD_API < Build.VERSION_CODES.HONEYCOMB) {
+                notificationManager.notify(NOTIF_ID, notification);
+            } else {
+                notificationManager.notify(NOTIF_ID, builder.build());
+            }
+        }
+        sendToFavoriteImageChangeBroadCast();
+    }
+
+    public boolean IsCurrentMusicInFavoriteList() {
+        if (isFavorite == null) {
+            setFavoriteImage();
+        }
+        return isFavorite;
+    }
+
+    private void actionPlayHandle() {
         if (notification_content == null) return;
 
         if (mediaPlayer.isPlaying()) {
@@ -405,6 +478,11 @@ public class MusicPlayerService extends Service {
 
     private void sendToPlayButtonImageChangeBroadCast() {
         Intent broadcastIntent = new Intent(MusicPlayerActivity.ACTION_PLAY_BUTTON_IMAGE_CHANGE);
+        sendBroadcast(broadcastIntent);
+    }
+
+    private void sendToFavoriteImageChangeBroadCast() {
+        Intent broadcastIntent = new Intent(MusicPlayerActivity.ACTION_FAVORITE_IMAGE_CHANGE);
         sendBroadcast(broadcastIntent);
     }
 

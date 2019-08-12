@@ -2,6 +2,7 @@ package haselmehri.app.com.elimusicplayer;
 
 import android.Manifest;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ComponentName;
@@ -81,7 +82,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     public static final String ACTION_MUSIC_PLAYER_UI_UPDATE = "com.example.haselmehri.firstapplication.MUSIC_PLAYER_UI_UPDATE";
     public static final String ACTION_MUSIC_PLAYER_CLOSE = "com.example.haselmehri.firstapplication.MUSIC_PLAYER_CLOSE";
     public static final String ACTION_PLAY_BUTTON_IMAGE_CHANGE = "com.example.haselmehri.firstapplication.ACTION_PLAY_BUTTON_IMAGE_CHANGE";
-    private Boolean isFavorite = false;
+    public static final String ACTION_FAVORITE_IMAGE_CHANGE = "com.example.haselmehri.firstapplication.ACTION_FAVORITE_IMAGE_CHANGE";
     private boolean isVisibleVolumeSeekbar = false;
     private MediaPlayer mediaPlayer;
     private ImageView coverImage;
@@ -452,20 +453,16 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         timer = new Timer();
         timer.schedule(new MusicPlayerActivity.MainTimer(), 0, 1000);
 
-        /*if (isPlaying)
-            mediaPlayer.start();*/
-        setFavoriteImage(mediaFile.getPath());
+        setFavoriteImage();
 
         setupAudioVisualizer();
     }
 
-    private void setFavoriteImage(String filePath) {
-        if (musicPlayerSQLiteHelper.checkFavoriteExists(filePath)) {
+    private void setFavoriteImage() {
+        if (musicPlayerService.IsCurrentMusicInFavoriteList()) {
             favoriteImage.setImageResource(R.drawable.ic_favorite_heart_gold);
-            isFavorite = true;
         } else {
             favoriteImage.setImageResource(R.drawable.ic_favorite_heart_gray);
-            isFavorite = false;
         }
     }
 
@@ -567,7 +564,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         favoriteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFavoriteStatus();
+                musicPlayerService.setFavoriteStatus();
             }
         });
 
@@ -669,29 +666,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                 setCurrentVisualizerVisibility(View.VISIBLE);
             else
                 setCurrentVisualizerVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void setFavoriteStatus() {
-        if (musicPlayerService.getMediaFiles() != null && musicPlayerService.getMediaFiles().size() > 0) {
-            MediaFile mediaFile = musicPlayerService.getMediaFiles().get(musicPlayerService.getCurrentMusicIndex());
-            if (isFavorite) {
-                if (musicPlayerSQLiteHelper.checkFavoriteExists(mediaFile.getPath())) {
-                    if (musicPlayerSQLiteHelper.deleteFavorite(mediaFile.getPath()))
-                        setFavoriteImage(mediaFile.getPath());
-                } else {
-                    setFavoriteImage(mediaFile.getPath());
-                }
-            } else {
-                if (!musicPlayerSQLiteHelper.checkFavoriteExists(mediaFile.getPath())) {
-                    Favorite favorite = new Favorite();
-                    favorite.setFilePath(mediaFile.getPath());
-                    if (musicPlayerSQLiteHelper.addFavorite(favorite))
-                        setFavoriteImage(mediaFile.getPath());
-                } else {
-                    setFavoriteImage(mediaFile.getPath());
-                }
-            }
         }
     }
 
@@ -877,6 +851,8 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
             filter.addAction(ACTION_MUSIC_PLAYER_UI_UPDATE);
             filter.addAction(ACTION_MUSIC_PLAYER_CLOSE);
             filter.addAction(ACTION_PLAY_BUTTON_IMAGE_CHANGE);
+            filter.addAction(ACTION_FAVORITE_IMAGE_CHANGE);
+
             registerReceiver(updateMusicPlayerUIListener, filter);
         }
         if (settingsContentObserver == null) {
@@ -992,6 +968,11 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                             playButton.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_play, null));
                             setCurrentVisualizerVisibility(View.INVISIBLE);
                         }
+                        intent.setAction("");
+                        break;
+                    }
+                    case ACTION_FAVORITE_IMAGE_CHANGE: {
+                        setFavoriteImage();
                         intent.setAction("");
                         break;
                     }
