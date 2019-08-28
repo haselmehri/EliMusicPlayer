@@ -308,6 +308,7 @@ public class MusicPlayerService extends Service {
                     mediaPlayer.start();
                     nextMusicPlay();
                     updateNoificationActionUI();
+                    sendToMusicPlayerUpdateBroadCast();
                 }
             });
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -423,11 +424,7 @@ public class MusicPlayerService extends Service {
     }
 
     private void setFavoriteImage() {
-        if (musicPlayerSQLiteHelper.checkFavoriteExists(getMediaFiles().get(getCurrentMusicIndex()).getPath())) {
-            isFavorite = true;
-        } else {
-            isFavorite = false;
-        }
+        isFavorite = musicPlayerSQLiteHelper.checkFavoriteExists(getMediaFiles().get(getCurrentMusicIndex()).getPath());
 
         if (notification_content != null) {
             if (isFavorite) {
