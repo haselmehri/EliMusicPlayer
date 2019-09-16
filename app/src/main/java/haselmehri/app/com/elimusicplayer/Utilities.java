@@ -1,11 +1,9 @@
 package haselmehri.app.com.elimusicplayer;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -18,12 +16,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -32,9 +24,17 @@ import android.widget.TextView;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 public class Utilities {
     public static final int PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE = 123;
+    public static final int PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE_FOR_FAVORITE_MUSIC = 124;
     public static final int PERMISSIONS_REQUEST_CODE_RECORD_AUDIO = 125;
+    public static final int PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE_FOR_SERVICE_CONNECTED = 126;
 
     public static void applyFontToMenuItem(Context context, MenuItem mi, Typeface typeface) {
         SpannableString mNewTitle = new SpannableString(mi.getTitle());
@@ -125,7 +125,7 @@ public class Utilities {
                 String uriAuthority = uri.getAuthority();
 
                 if (isMediaDoc(uriAuthority)) {
-                    String idArr[] = documentId.split(":");
+                    String[] idArr = documentId.split(":");
                     if (idArr.length == 2) {
                         // First item is document type.
                         String docType = idArr[0];
@@ -159,7 +159,7 @@ public class Utilities {
                     ret = getRealPath(ctx.getContentResolver(), downloadUriAppendId, null);
 
                 } else if (isExternalStoreDoc(uriAuthority)) {
-                    String idArr[] = documentId.split(":");
+                    String[] idArr = documentId.split(":");
                     if (idArr.length == 2) {
                         String type = idArr[0];
                         String realDocId = idArr[1];
@@ -328,6 +328,25 @@ public class Utilities {
         if (currentAPIVersion >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, permission)) {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{permission}, requestCode);
+                } else {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{permission}, requestCode);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+/*    static boolean checkPermission(final Context context, final String permission, final int requestCode,
+                                   String message, String dialogTitle, String yesText, String noText) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, permission)) {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
                     alertBuilder.setCancelable(true);
                     alertBuilder.setTitle(dialogTitle);
@@ -357,6 +376,6 @@ public class Utilities {
         } else {
             return true;
         }
-    }
+    }*/
 
 }

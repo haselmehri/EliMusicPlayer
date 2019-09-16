@@ -16,8 +16,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -29,10 +27,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import haselmehri.app.com.elimusicplayer.SQLiteHelper.MusicPlayerSQLiteHelper;
 import haselmehri.app.com.elimusicplayer.model.Favorite;
 

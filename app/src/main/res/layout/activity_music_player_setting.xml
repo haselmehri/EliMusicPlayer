@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/music_player_coordinator"
@@ -7,20 +7,6 @@
     android:layout_height="match_parent"
     android:layoutDirection="ltr"
     tools:context=".MusicPlayerSettingActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_music_player_setting"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways">
-
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,12 +16,17 @@
         android:padding="@dimen/standard_padding"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/switch_show_audio_visualizer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show Visualizer"
-            app:switchPadding="@dimen/standard_padding" />
+        <Button
+            android:id="@+id/button_save_setting"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/selector_accent_button"
+            android:text="Save Setting"
+            android:textColor="@color/white"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/gender_TextView"
@@ -85,16 +76,25 @@
                 android:text="Line Bar Visualizer" />
         </RadioGroup>
 
-        <Button
-            android:id="@+id/button_save_setting"
-            android:layout_width="300dp"
-            android:layout_height="40dp"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="@dimen/standard_margin"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/selector_accent_button"
-            android:text="Save Setting"
-            android:textColor="@color/white"
-            android:textSize="14dp"></Button>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_show_audio_visualizer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Visualizer"
+            app:switchPadding="@dimen/standard_padding" />
     </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_music_player_setting"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

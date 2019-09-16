@@ -1,8 +1,6 @@
 package haselmehri.app.com.elimusicplayer;
 
 import android.Manifest;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ComponentName;
@@ -20,18 +18,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +38,8 @@ import com.chibde.visualizer.LineVisualizer;
 import com.crashlytics.android.Crashlytics;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jaiselrahman.filepicker.activity.FilePickerActivity;
 import com.jaiselrahman.filepicker.config.Configurations;
@@ -68,6 +56,16 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import haselmehri.app.com.elimusicplayer.SQLiteHelper.MusicPlayerSQLiteHelper;
 import haselmehri.app.com.elimusicplayer.SharedPreferencesHelper.MusicPlayerSharedPrefManager;
 import haselmehri.app.com.elimusicplayer.model.Favorite;
@@ -117,8 +115,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_eli_music);
 
+        /*Log.i(TAG, "onCreate->isTaskRoot(): " + isTaskRoot());
+        if (!isTaskRoot())
+            finish();*/
+
+        setContentView(R.layout.activity_eli_music);
         bindService(new Intent(this, MusicPlayerService.class), this, BIND_AUTO_CREATE);
 
         setupViews();
@@ -158,16 +160,22 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                     case R.id.navigation_menu_select_musics:
                         selectMusicFile();
                         break;
-                    case R.id.navigation_menu_favorite_list:
-                        loadFavoriteMusics();
+                    case R.id.navigation_menu_favorite_list: {
+                        boolean result = Utilities.checkPermission(MusicPlayerActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Utilities.PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE_FOR_FAVORITE_MUSIC,
+                                getResources().getString(R.string.message_access_external_storage), "Access Dialog", "Yes", "No");
+                        if (result)
+                            loadFavoriteMusics();
                         break;
-                    case R.id.navigation_menu_select_from_storage:
+                    }
+                    case R.id.navigation_menu_select_from_storage: {
                         boolean result = Utilities.checkPermission(MusicPlayerActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Utilities.PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE,
                                 getResources().getString(R.string.message_access_external_storage), "Access Dialog", "Yes", "No");
                         if (result)
                             selectFileOrFolder();
                         break;
+                    }
                     case R.id.navigation_menu_setting:
                         startActivityForResult(new Intent(MusicPlayerActivity.this, MusicPlayerSettingActivity.class), REQUSET_CODE_SETTING);
                         break;
@@ -297,7 +305,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                         circleBarVisualizer.setPlayer(musicPlayerService.getMediaPlayer().getAudioSessionId());
 
                         contentRelativeLayout.addView(circleBarVisualizer);
-
                         break;
                     case CircleVisualizer:
                         params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -338,8 +345,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
 
                         break;
                 }
-
-
             } else {
                 disconnectCurrentVisualizer();
             }
@@ -409,6 +414,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             coverSong.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             coverImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
             Glide.with(this)
                     .load(coverSong)
                     .into(coverImage);
@@ -451,7 +457,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
             timer.purge();
         }
         timer = new Timer();
-        timer.schedule(new MusicPlayerActivity.MainTimer(), 0, 1000);
+        timer.schedule(new MainTimer(), 0, 1000);
 
         setFavoriteImage();
 
@@ -650,6 +656,24 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                 snackbar.getView().setBackgroundColor(ContextCompat.getColor(MusicPlayerActivity.this, R.color.color_orange));
                 snackbar.show();
             }
+        } else if (requestCode == Utilities.PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE_FOR_FAVORITE_MUSIC) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                loadFavoriteMusics();
+            } else {
+                Snackbar snackbar = Snackbar.make(musicPlayerCoordinator, getResources().getString(R.string.message_not_permission_external_storage), Snackbar.LENGTH_LONG);
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(MusicPlayerActivity.this, R.color.color_orange));
+                snackbar.show();
+            }
+        } else if (requestCode == Utilities.PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE_FOR_SERVICE_CONNECTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Uri fileUri = Uri.fromFile(new File(musicPlayerService.getMediaFiles().get(0).getPath()));
+                musicPlayerService.prepareMediaPlayer(fileUri, true);
+                prepareViews();
+            } else {
+                Snackbar snackbar = Snackbar.make(musicPlayerCoordinator, getResources().getString(R.string.message_not_permission_external_storage), Snackbar.LENGTH_LONG);
+                snackbar.getView().setBackgroundColor(ContextCompat.getColor(MusicPlayerActivity.this, R.color.color_orange));
+                snackbar.show();
+            }
         }
     }
 
@@ -741,10 +765,10 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     private void selectMusicFile() {
         Intent intent = new Intent(this, FilePickerActivity.class);
         intent.putExtra(FilePickerActivity.CONFIGS, new Configurations.Builder()
-                .setCheckPermission(true)
                 .setShowImages(false)
                 .setShowVideos(false)
                 .setShowAudios(true)
+                .setCheckPermission(true)
                 .setMaxSelection(-1)
                 .build());
         startActivityForResult(intent, REQUEST_CODE_PICK_MUSIC);
@@ -894,20 +918,28 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         super.onDestroy();
     }
 
+    private void configMediaPlayerForServiceConnected() {
+
+    }
+
     //=== start implements ServiceConnection methods===
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
+        Log.i(TAG, "onServiceConnected->isTaskRoot(): " + isTaskRoot());
+        if (!isTaskRoot())
+            finish();
+
         MusicPlayerService.MusicPlayerBinder musicPlayerBinder = (MusicPlayerService.MusicPlayerBinder) service;
         musicPlayerService = musicPlayerBinder.getService();
 
         Intent intent = getIntent();
         if (intent.getAction() != null && intent.getAction().equals("android.intent.action.VIEW")) {
-            NotificationManager notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+            /*NotificationManager notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
             if (notificationManager != null) {
                 notificationManager.cancel(MusicPlayerService.NOTIF_ID);
             }
             musicPlayerService.stopForeground(true);
-            //musicPlayerService.stopSelf();
+            musicPlayerService.stopSelf();*/
 
             Log.i(TAG, "onServiceConnected: " + MusicPlayerService.isRunningService());
             if (!MusicPlayerService.isRunningService()) {
@@ -928,10 +960,15 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
 
                 musicPlayerService.setMediaFiles(tempMediaFiles);
                 musicPlayerService.setCurrentMusicIndex(0);
-                Uri fileUri = Uri.fromFile(new File(musicPlayerService.getMediaFiles().get(0).getPath()));
 
-                musicPlayerService.prepareMediaPlayer(fileUri, true);
-                prepareViews();
+                boolean result = Utilities.checkPermission(MusicPlayerActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Utilities.PERMISSIONS_REQUEST_CODE_READ_EXTERNAL_STORAGE_FOR_SERVICE_CONNECTED,
+                        getResources().getString(R.string.message_access_external_storage), "Access Dialog", "Yes", "No");
+                if (result) {
+                    Uri fileUri = Uri.fromFile(new File(musicPlayerService.getMediaFiles().get(0).getPath()));
+                    musicPlayerService.prepareMediaPlayer(fileUri, true);
+                    prepareViews();
+                }
             }
         } else {
             if (musicPlayerService.getMediaPlayer() != null && musicPlayerService.getMediaFiles() != null && musicPlayerService.getMediaFiles().size() > 0) {
@@ -1006,14 +1043,13 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         public void onChange(boolean selfChange) {
             super.onChange(selfChange);
             Log.v(TAG, "Settings change detected");
-            if (audioManager != null && volumeSeekbar != null && volumeSettingImage != null)
-            {
-               int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-               volumeSeekbar.setProgress(currentVolume);
-               if (currentVolume == 0)
-                   volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_off, null));
-               else
-                   volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up, null));
+            if (audioManager != null && volumeSeekbar != null && volumeSettingImage != null) {
+                int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                volumeSeekbar.setProgress(currentVolume);
+                if (currentVolume == 0)
+                    volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_off, null));
+                else
+                    volumeSettingImage.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up, null));
             }
         }
     }
