@@ -14,8 +14,6 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".MusicPlayerService" />
-
         <activity
             android:name=".MusicPlayerActivity"
             android:configChanges="orientation|screenSize"
@@ -26,9 +24,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <action android:name="android.intent.action.MUSIC_PLAYER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
 
                 <category android:name="android.intent.category.CATEGORY_APP_MUSIC" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -36,9 +34,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <action android:name="android.intent.action.MUSIC_PLAYER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
 
                 <category android:name="android.intent.category.CATEGORY_APP_MUSIC" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -55,9 +53,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <action android:name="android.intent.action.MUSIC_PLAYER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
 
                 <category android:name="android.intent.category.CATEGORY_APP_MUSIC" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -71,9 +69,13 @@
                 <data android:mimeType="application/itunes" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MusicPlayerSettingActivity"
             android:label="Music Player Setting" />
+
+        <service android:name=".MusicPlayerService" />
     </application>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 </manifest>
