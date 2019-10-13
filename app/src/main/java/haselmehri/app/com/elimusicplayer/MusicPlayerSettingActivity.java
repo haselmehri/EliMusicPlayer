@@ -9,10 +9,13 @@ import android.widget.RadioButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import haselmehri.app.com.elimusicplayer.SharedPreferencesHelper.MusicPlayerSharedPrefManager;
 import haselmehri.app.com.elimusicplayer.model.MusicPlayerSetting;
 
 public class MusicPlayerSettingActivity extends AppCompatActivity {
+
+    private static final String TAG = "MusicPlayerSettingActiv";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class MusicPlayerSettingActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar_music_player_setting);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);

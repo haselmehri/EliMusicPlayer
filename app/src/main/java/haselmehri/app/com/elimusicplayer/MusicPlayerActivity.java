@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -38,6 +39,7 @@ import com.chibde.visualizer.LineVisualizer;
 import com.crashlytics.android.Crashlytics;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.farsitel.bazaar.IUpdateCheckService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -59,6 +61,7 @@ import java.util.TimerTask;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -108,25 +111,24 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     private MusicPlayerSQLiteHelper musicPlayerSQLiteHelper;
     private MusicPlayerService musicPlayerService;
     private FirebaseAnalytics mFirebaseAnalytics;
-
     private SeekBar volumeSeekbar = null;
     private AudioManager audioManager = null;
+    private IUpdateCheckService service;
+    private UpdateServiceConnection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*Log.i(TAG, "onCreate->isTaskRoot(): " + isTaskRoot());
-        if (!isTaskRoot())
-            finish();*/
-
         setContentView(R.layout.activity_eli_music);
-        bindService(new Intent(this, MusicPlayerService.class), this, BIND_AUTO_CREATE);
 
         setupViews();
         setAnimationOnMusicInfo();
         setToolbar();
         setupNavigationView();
+        initUpdateService();
+
+        bindService(new Intent(this, MusicPlayerService.class), this, BIND_AUTO_CREATE);
     }
 
     private void setupNavigationView() {
@@ -183,6 +185,12 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
                         AboutDialog aboutDialog = new AboutDialog(MusicPlayerActivity.this);
                         aboutDialog.setCancelable(false);
                         aboutDialog.show();
+                        break;
+                    case R.id.navigation_menu_raiting:
+                        Intent intent = new Intent(Intent.ACTION_EDIT);
+                        intent.setData(Uri.parse("bazaar://details?id=" + getApplicationContext().getPackageName()));
+                        intent.setPackage("com.farsitel.bazaar");
+                        startActivity(intent);
                         break;
                     case R.id.navigation_menu_exit:
                         finish();
@@ -786,6 +794,75 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
 
     }
 
+    private void showUpdateAppDialog() {
+        AlertDialog.Builder updateAppNotificationDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.update_title_dialog)
+                .setMessage(R.string.update_message_dialog)
+                .setCancelable(true)
+                .setPositiveButton(R.string.positive_button_dialog, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("bazaar://details?id=" + getApplicationContext().getPackageName()));
+                        intent.setPackage("com.farsitel.bazaar");
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton(R.string.negative_button_dialog, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        updateAppNotificationDialog.show();
+    }
+
+    private void initUpdateService() {
+        Log.i(TAG, "initService()");
+        connection = new UpdateServiceConnection();
+        Intent i = new Intent("com.farsitel.bazaar.service.UpdateCheckService.BIND");
+        i.setPackage("com.farsitel.bazaar");
+        boolean ret = bindService(i, connection, Context.BIND_AUTO_CREATE);
+        Log.d(TAG, "initService() bound value: " + ret);
+    }
+
+    /**
+     * This is our function to un-binds this activity from our service.
+     */
+    private void releaseService() {
+        unbindService(connection);
+        connection = null;
+        Log.d(TAG, "releaseService(): unbound.");
+    }
+
+    @Override
+    protected void onStart() {
+        if (updateMusicPlayerUIListener == null) {
+            updateMusicPlayerUIListener = new UpdateMusicPlayerUIListener();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ACTION_MUSIC_PLAYER_UI_UPDATE);
+            filter.addAction(ACTION_MUSIC_PLAYER_CLOSE);
+            filter.addAction(ACTION_PLAY_BUTTON_IMAGE_CHANGE);
+            filter.addAction(ACTION_FAVORITE_IMAGE_CHANGE);
+
+            registerReceiver(updateMusicPlayerUIListener, filter);
+        }
+        if (settingsContentObserver == null) {
+            settingsContentObserver = new SettingsContentObserver(new Handler());
+            this.getApplicationContext().getContentResolver().registerContentObserver(
+                    android.provider.Settings.System.CONTENT_URI, true,
+                    settingsContentObserver);
+        }
+
+        if (mediaPlayer != null) {
+            SetAudioVisualizerSession = false;
+            setupAudioVisualizer();
+        }
+
+        super.onStart();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -868,32 +945,6 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
     }
 
     @Override
-    protected void onStart() {
-        if (updateMusicPlayerUIListener == null) {
-            updateMusicPlayerUIListener = new UpdateMusicPlayerUIListener();
-            IntentFilter filter = new IntentFilter();
-            filter.addAction(ACTION_MUSIC_PLAYER_UI_UPDATE);
-            filter.addAction(ACTION_MUSIC_PLAYER_CLOSE);
-            filter.addAction(ACTION_PLAY_BUTTON_IMAGE_CHANGE);
-            filter.addAction(ACTION_FAVORITE_IMAGE_CHANGE);
-
-            registerReceiver(updateMusicPlayerUIListener, filter);
-        }
-        if (settingsContentObserver == null) {
-            settingsContentObserver = new SettingsContentObserver(new Handler());
-            this.getApplicationContext().getContentResolver().registerContentObserver(
-                    android.provider.Settings.System.CONTENT_URI, true,
-                    settingsContentObserver);
-        }
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
         try {
             if (updateMusicPlayerUIListener != null)
@@ -912,14 +963,52 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
             timer.purge();
             timer.cancel();
         }
+
+        releaseService();
+
         Log.i(TAG, "onDestroy: onDestroy()");
+
         finish();
 
         super.onDestroy();
     }
 
-    private void configMediaPlayerForServiceConnected() {
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
+    private class UpdateServiceConnection implements ServiceConnection {
+        public void onServiceConnected(ComponentName name, IBinder boundService) {
+            service = IUpdateCheckService.Stub.asInterface(boundService);
+            try {
+                MusicPlayerSharedPrefManager musicPlayerSharedPrefManager = new MusicPlayerSharedPrefManager(MusicPlayerActivity.this);
+                long vCode = service.getVersionCode(getApplicationContext().getPackageName());
+                musicPlayerSharedPrefManager.updateLastShowNewVersionNotification();
+                if (vCode != -1) {
+                    Date lastCheck = musicPlayerSharedPrefManager.getLastShowNewVersionNotification();
+                    if (lastCheck == null)
+                        showUpdateAppDialog();
+                    else {
+                        //Comparing dates
+                        long differenceMilliSecond = Math.abs((new Date()).getTime() - lastCheck.getTime());
+                        long differenceDates = differenceMilliSecond / (24 * 60 * 60 * 1000);
+
+                        if (differenceDates > 10)
+                            showUpdateAppDialog();
+                    }
+                }
+                //Toast.makeText(MusicPlayerActivity.this, "Version Code:" + vCode, Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "onServiceConnected(): Connected");
+        }
+
+        public void onServiceDisconnected(ComponentName name) {
+            service = null;
+            Log.d(TAG, "onServiceDisconnected(): Disconnected");
+        }
     }
 
     //=== start implements ServiceConnection methods===
@@ -1028,7 +1117,7 @@ public class MusicPlayerActivity extends AppCompatActivity implements ServiceCon
         }
     }
 
-    public class SettingsContentObserver extends ContentObserver {
+    private class SettingsContentObserver extends ContentObserver {
 
         public SettingsContentObserver(Handler handler) {
             super(handler);

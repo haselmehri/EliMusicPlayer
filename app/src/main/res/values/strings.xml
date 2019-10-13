@@ -20,4 +20,8 @@
     <string name="about_ok_button" translatable="false">Ok</string>
     <string name="about_description" translatable="false">Eli Music Player is an open source app that has been developed by &lt;a href="https://github.com/haselmehri">Yadollah Haselmehri&lt;/a>.\nGet this source app from Github via the link below</string>
     <string name="about_github_link" translatable="false">&lt;a href="https://github.com/haselmehri/EliMusicPlayer">Github&lt;/a></string>
+    <string name="update_message_dialog" translatable="false">Dear user\nThere is a new version of the app in the cafe Bazar, would you like to update?</string>
+    <string name="update_title_dialog" translatable="false">New version of the App!</string>
+    <string name="positive_button_dialog" translatable="false">Update App</string>
+    <string name="negative_button_dialog" translatable="false">Cancel</string>
 </resources>

@@ -26,6 +26,10 @@
             android:icon="@drawable/ic_about"
             android:title="About" />
         <item
+            android:id="@+id/navigation_menu_raiting"
+            android:icon="@drawable/ic_rate"
+            android:title="Rate" />
+        <item
             android:icon="@drawable/ic_exit_red"
             android:id="@+id/navigation_menu_exit"
             android:title="Exit"></item>

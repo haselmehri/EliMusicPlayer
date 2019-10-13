@@ -470,6 +470,21 @@ public class MusicPlayerService extends Service {
         sendToPlayButtonImageChangeBroadCast();
     }
 
+    private void stopMediaPlayer() {
+        if (notification_content == null) return;
+
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            notification_content.setImageViewResource(R.id.play_button, R.drawable.ic_action_play_blue);
+            if (CURRENT_BUILD_API < Build.VERSION_CODES.HONEYCOMB) {
+                notificationManager.notify(NOTIF_ID, notification);
+            } else {
+                notificationManager.notify(NOTIF_ID, builder.build());
+            }
+            sendToPlayButtonImageChangeBroadCast();
+        }
+    }
+
     private void sendToPlayButtonImageChangeBroadCast() {
         Intent broadcastIntent = new Intent(MusicPlayerActivity.ACTION_PLAY_BUTTON_IMAGE_CHANGE);
         sendBroadcast(broadcastIntent);
@@ -514,7 +529,7 @@ public class MusicPlayerService extends Service {
                     case 0:
                         Log.i(TAG, "Headset is unplugged");
                         //Toast.makeText(MusicPlayerService.this,"Headset is unplugged",Toast.LENGTH_LONG).show();
-                        actionPlayHandle();
+                        stopMediaPlayer();
                         break;
                     case 1:
                         Log.i(TAG, "Headset is plugged");
